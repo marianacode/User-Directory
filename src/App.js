@@ -1,26 +1,29 @@
-import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Signup from "./pages/Signup";
-import Search from "./pages/Search";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Wrapper from "./components/Wrapper";
+import React, { useMemo, useState, useEffect } from "react";
 import "./App.css";
+import Table from "./components/Table";
+import Columns from "./utils/Colums"
 
-function App() {
+import axios from 'axios';
+
+const App = () => {
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    (async () => {
+      const result = await axios.get("https://randomuser.me/api/?nat=us&results=20");
+      setData(result.data.results);
+    })();
+  }, []);
+
+
+  const columns = useMemo(
+    () => Columns(), [])
+
   return (
-    <Router>
-      <div>
-        <Navbar />
-        <Wrapper>
-          <Route exact path="/" component={Search} />
-          <Route exact path="/signup" component={Signup} />
-          <Route exact path="/search" component={Search} />
-        </Wrapper>
-        <Footer />
-      </div>
-    </Router>
-  );
-}
+  <div className="App">
+    <Table columns={columns} data={data} />
+    </div>
+    );
+};
 
 export default App;
